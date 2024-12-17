@@ -27,7 +27,7 @@ public class Main {
         article.subject = subject;
         article.content = content;
 
-        System.out.println("생성된 게시물 객체" + article);
+        System.out.println("생성된 게시물 객체: " + article.toString());
         System.out.printf("%d번 게시물이 등록되었습니다.\n", article.id);
       }
 
@@ -48,4 +48,9 @@ class Article {
   int id;
   String subject;
   String content;
+
+  @Override
+  public String toString() {
+    return "{id: %d, subject: \"%s\", content: \"%s\"}".formatted(id, subject, content);
+  }
 }
