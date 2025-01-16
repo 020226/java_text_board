@@ -20,12 +20,7 @@ public class Main {
 
         int id = ++lastArticleId;
 
-        // 객체는 항상 새롭게 만들어진다
-        Article article = new Article(); // 게시물 작성 후 article 객체 생성
-        // 입력 받은 내용을 객체와 연결
-        article.id = id;
-        article.subject = subject;
-        article.content = content;
+        Article article = new Article(id, subject, content); // 게시물 작성 후 article 객체 생성
 
         System.out.println("생성된 게시물 객체: " + article.toString());
         System.out.printf("%d번 게시물이 등록되었습니다.\n", article.id);
@@ -48,6 +43,12 @@ class Article {
   int id;
   String subject;
   String content;
+
+  public Article(int id, String subject, String content) {
+    this.id = id;
+    this.subject = subject;
+    this.content = content;
+  }
 
   @Override
   public String toString() {
