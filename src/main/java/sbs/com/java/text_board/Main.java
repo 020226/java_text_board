@@ -12,7 +12,6 @@ public class Main {
   }
   public static void main(String[] args) {
     Scanner sc = new Scanner(System.in);
-    Article lastArticle = null;
     List<Article> articles = new ArrayList<>();
 
     makeTestData(articles); // 테스트 게시물
@@ -34,7 +33,6 @@ public class Main {
         int id = ++lastArticleId;
 
         Article article = new Article(id, subject, content); // 게시물 작성 후 article 객체 생성
-        lastArticle = article;
 
         articles.add(article);
         System.out.printf("%d번 게시물이 등록되었습니다.\n", article.id);
@@ -55,11 +53,18 @@ public class Main {
           }
 
       } else if (cmd.equals("/usr/article/detail")) {
-        Article article = lastArticle;
-        if(article == null) {
+        if(articles.isEmpty()) {
           System.out.println("게시물이 존재하지 않습니다.");
           continue;
         }
+
+        Article article =  articles.get(articles.size() -1);
+
+        if(article == null) {
+          System.out.println("해당 게시물이 존재하지 않습니다.");
+          continue;
+        }
+
         System.out.println("== 게시물 상세보기 ==");
         System.out.printf("번호 : %d\n", article.id);
         System.out.printf("제목 : %s\n", article.subject);
