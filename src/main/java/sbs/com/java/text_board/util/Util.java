@@ -1,4 +1,4 @@
-package sbs.com.java.text_board;
+package sbs.com.java.text_board.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
