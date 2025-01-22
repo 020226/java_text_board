@@ -30,15 +30,17 @@ public class Main {
         lastArticleId++;
       } else if (rq.getUrlPath().equals("/usr/article/list")) {
         actionUsrArticleList(rq, articles);
-      } else if (rq.getUrlPath().equals("/usr/article/detail")) {        
+      } else if (rq.getUrlPath().equals("/usr/article/detail")) {
         actionUsrArticleDetail(rq, articles);
       } else if (rq.getUrlPath().equals("/usr/article/modify")) {
         actionUsrArticleModify(sc, rq, articles);
+      } else if (rq.getUrlPath().equals("/usr/article/delete")) {
+        actionUsrArticleDelete(rq, articles);
       } else if (rq.getUrlPath().equals("exit")) {
         System.out.println("프로그램을 종료합니다.");
         break;
       } else {
-        System.out.println("잘못된 명령어입니다.");
+        System.out.println("잘못 된 명령어입니다.");
       }
     }
 
@@ -46,32 +48,75 @@ public class Main {
     sc.close();
   }
 
-  private static void actionUsrArticleModify(Scanner sc, Rq rq, List<Article> articles) {
-    if(articles.isEmpty()) {
+  private static void actionUsrArticleDelete(Rq rq, List<Article> articles) {
+    if (articles.isEmpty()) {
       System.out.println("현재 게시물이 존재하지 않습니다.");
       return;
     }
+
     Map<String, String> params = rq.getParams();
-    if(!params.containsKey("id")) {
+
+    if (!params.containsKey("id")) {
       System.out.println("id 값을 입력해주세요.");
       return;
     }
+
     int id = 0;
+
     try {
       id = Integer.parseInt(params.get("id"));
     } catch (NumberFormatException e) {
       System.out.println("id를 정수형태로 입력해주세요.");
       return;
     }
-    if(id > articles.size()) {
+
+    Article article = finById(articles, id);
+
+    if (article == null) {
       System.out.printf("%d번 게시물은 존재하지 않습니다.\n", id);
       return;
     }
-    Article article = articles.get(id - 1);
+
+    articles.remove(article);
+
+    System.out.printf("%d번 게시물은 삭제하였습니다.\n", id);
+  }
+
+  private static void actionUsrArticleModify(Scanner sc, Rq rq, List<Article> articles) {
+    if (articles.isEmpty()) {
+      System.out.println("현재 게시물이 존재하지 않습니다.");
+      return;
+    }
+
+    Map<String, String> params = rq.getParams();
+
+    if (!params.containsKey("id")) {
+      System.out.println("id 값을 입력해주세요.");
+      return;
+    }
+
+    int id = 0;
+
+    try {
+      id = Integer.parseInt(params.get("id"));
+    } catch (NumberFormatException e) {
+      System.out.println("id를 정수형태로 입력해주세요.");
+      return;
+    }
+
+    Article article = finById(articles, id);
+
+    if (article == null) {
+      System.out.printf("%d번 게시물은 존재하지 않습니다.\n", id);
+      return;
+    }
+
     System.out.print("새 제목 : ");
     article.subject = sc.nextLine();
+
     System.out.print("새 내용 : ");
     article.content = sc.nextLine();
+
     System.out.printf("%d번 게시물이 수정되었습니다.\n", id);
   }
 
@@ -79,36 +124,48 @@ public class Main {
     System.out.println("== 게시물 작성 ==");
     System.out.print("제목 : ");
     String subject = sc.nextLine();
+
     System.out.print("내용 : ");
     String content = sc.nextLine();
+
     int id = ++lastArticleId;
+
     Article article = new Article(id, subject, content);
+
     articles.add(article);
+
     System.out.printf("%d번 게시물이 등록되었습니다.\n", article.id);
   }
 
   private static void actionUsrArticleDetail(Rq rq, List<Article> articles) {
-    if(articles.isEmpty()) {
+    if (articles.isEmpty()) {
       System.out.println("현재 게시물이 존재하지 않습니다.");
       return;
     }
+
     Map<String, String> params = rq.getParams();
-    if(!params.containsKey("id")) {
+
+    if (!params.containsKey("id")) {
       System.out.println("id 값을 입력해주세요.");
       return;
     }
+
     int id = 0;
+
     try {
       id = Integer.parseInt(params.get("id"));
     } catch (NumberFormatException e) {
       System.out.println("id를 정수형태로 입력해주세요.");
       return;
     }
-    if(id > articles.size()) {
+
+    Article article = finById(articles, id);
+
+    if (article == null) {
       System.out.printf("%d번 게시물은 존재하지 않습니다.\n", id);
       return;
     }
-    Article article = articles.get(id - 1);
+
     System.out.println("== 게시물 상세보기 ==");
     System.out.printf("번호 : %d\n", article.id);
     System.out.printf("제목 : %s\n", article.subject);
@@ -116,37 +173,64 @@ public class Main {
   }
 
   private static void actionUsrArticleList(Rq rq, List<Article> articles) {
-    if(articles.isEmpty()) {
+    if (articles.isEmpty()) {
       System.out.println("현재 게시물이 존재하지 않습니다.");
       return;
     }
+
     Map<String, String> params = rq.getParams();
+
     // 검색 기능 시작
     List<Article> filteredArticls = articles;
-    if(params.containsKey("searchKeyword")) {
+
+    if (params.containsKey("searchKeyword")) {
       String searchKeyword = params.get("searchKeyword");
+
       filteredArticls = new ArrayList<>();
-      for(Article article : articles) {
+
+      for (Article article : articles) {
         boolean matched = article.subject.contains(searchKeyword) || article.content.contains(searchKeyword);
-        if(matched) filteredArticls.add(article);
+
+        if (matched) filteredArticls.add(article);
       }
     }
     // 검색 기능 끝
+
     // 정렬 로직 시작
     boolean orderByIdDesc = true;
-    if(params.containsKey("orderBy") && params.get("orderBy").equals("idAsc")) {
+
+    if (params.containsKey("orderBy") && params.get("orderBy").equals("idAsc")) {
       orderByIdDesc = false;
     }
+
     List<Article> sortedArticles = filteredArticls;
-    if(orderByIdDesc) {
+
+    if (orderByIdDesc) {
       sortedArticles = Util.reverseList(sortedArticles);
     }
     // 정렬 로직 끝
+
     System.out.println("== 게시물 리스트 ==");
     System.out.println("번호 | 제목");
+
     sortedArticles.forEach(
         article -> System.out.printf("%d | %s\n", article.id, article.subject)
     );
+  }
+
+  private static Article finById(List<Article> articles, int id) {
+    /*
+    for (Article article : articles) {
+      if (article.id == id) {
+        return article;
+      }
+    }
+    */
+
+    return articles.stream()
+        .filter(article -> article.id == id)
+        .findFirst() // 첫 번째 요소 찾기
+        .orElse(null);
   }
 }
 
@@ -192,16 +276,16 @@ class Util {
     Map<String, String> params = new HashMap<>();
     String[] urlBits = url.split("\\?", 2);
 
-    if(urlBits.length == 1) {
+    if (urlBits.length == 1) {
       return params;
     }
 
     String queryStr = urlBits[1];
 
-    for(String bit : queryStr.split("&")) {
+    for (String bit : queryStr.split("&")) {
       String[] bits = bit.split("=", 2);
 
-      if(bits.length == 1) {
+      if (bits.length == 1) {
         continue;
       }
 
@@ -214,10 +298,12 @@ class Util {
   static String getPathFromUrl(String url) {
     return url.split("\\?", 2)[0];
   }
+
   // 이 함수는 원본리스트를 훼손하지 않고, 새 리스트를 만듭니다. 즉 정렬이 반대인 복사본리스트를 만들어서 반환합니다.
-  public static<T> List<T> reverseList(List<T> list) {
+  public static <T> List<T> reverseList(List<T> list) {
     List<T> reverse = new ArrayList<>(list.size());
-    for ( int i = list.size() - 1; i >= 0; i-- ) {
+
+    for (int i = list.size() - 1; i >= 0; i--) {
       reverse.add(list.get(i));
     }
     return reverse;
