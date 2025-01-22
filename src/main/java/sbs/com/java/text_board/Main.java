@@ -41,47 +41,7 @@ public class Main {
 
         System.out.printf("%d번 게시물이 등록되었습니다.\n", article.id);
       } else if (rq.getUrlPath().equals("/usr/article/list")) {
-        if(articles.isEmpty()) {
-          System.out.println("현재 게시물이 존재하지 않습니다.");
-          continue;
-        }
-
-        Map<String, String> params = rq.getParams();
-        // 검색 기능 시작
-        // articles : 현재 정렬되지 않은 1 ~ 100개의 게시물 리스트
-        List<Article> filteredArticls = articles;
-
-        if(params.containsKey("searchKeyword")) {
-          String searchKeyword = params.get("searchKeyword");
-          filteredArticls = new ArrayList<>();
-
-          for(Article article : articles) {
-            boolean matched = article.subject.contains(searchKeyword) || article.content.contains(searchKeyword);
-
-            if(matched) filteredArticls.add(article);
-          }
-        }
-        // 검색 기능 끝
-
-        // 정렬 로직 시작
-        boolean orderByIdDesc = true;
-        if(params.containsKey("orderBy") && params.get("orderBy").equals("idAsc")) {
-          orderByIdDesc = false;
-        }
-
-        List<Article> sortedArticles = filteredArticls;
-
-        if(orderByIdDesc) {
-          sortedArticles = Util.reverseList(sortedArticles);
-        }
-        // 정렬 로직 끝
-        System.out.println("== 게시물 리스트 ==");
-        System.out.println("번호 | 제목");
-
-        sortedArticles.forEach(
-            article -> System.out.printf("%d | %s\n", article.id, article.subject)
-        );
-
+        actionUsrArticleList(rq, articles);
       } else if (rq.getUrlPath().equals("/usr/article/detail")) {
         if(articles.isEmpty()) {
           System.out.println("현재 게시물이 존재하지 않습니다.");
@@ -122,6 +82,40 @@ public class Main {
 
     System.out.println("== 자바 텍스트 게시판 종료 ==");
     sc.close();
+  }
+
+  private static void actionUsrArticleList(Rq rq, List<Article> articles) {
+    if(articles.isEmpty()) {
+      System.out.println("현재 게시물이 존재하지 않습니다.");
+      return;
+    }
+    Map<String, String> params = rq.getParams();
+    // 검색 기능 시작
+    List<Article> filteredArticls = articles;
+    if(params.containsKey("searchKeyword")) {
+      String searchKeyword = params.get("searchKeyword");
+      filteredArticls = new ArrayList<>();
+      for(Article article : articles) {
+        boolean matched = article.subject.contains(searchKeyword) || article.content.contains(searchKeyword);
+        if(matched) filteredArticls.add(article);
+      }
+    }
+    // 검색 기능 끝
+    // 정렬 로직 시작
+    boolean orderByIdDesc = true;
+    if(params.containsKey("orderBy") && params.get("orderBy").equals("idAsc")) {
+      orderByIdDesc = false;
+    }
+    List<Article> sortedArticles = filteredArticls;
+    if(orderByIdDesc) {
+      sortedArticles = Util.reverseList(sortedArticles);
+    }
+    // 정렬 로직 끝
+    System.out.println("== 게시물 리스트 ==");
+    System.out.println("번호 | 제목");
+    sortedArticles.forEach(
+        article -> System.out.printf("%d | %s\n", article.id, article.subject)
+    );
   }
 }
 
