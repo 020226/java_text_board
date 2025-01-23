@@ -3,6 +3,7 @@ package sbs.com.java.text_board.container;
 import sbs.com.java.text_board.article.ArticleController;
 import sbs.com.java.text_board.article.ArticleRepository;
 import sbs.com.java.text_board.article.ArticleService;
+import sbs.com.java.text_board.base.session.Session;
 import sbs.com.java.text_board.member.MemberController;
 import sbs.com.java.text_board.member.MemberRepository;
 import sbs.com.java.text_board.member.MemberService;
@@ -10,6 +11,7 @@ import sbs.com.java.text_board.member.MemberService;
 import java.util.Scanner;
 public class Container {
   public static Scanner sc;
+  public static Session session;
   public static MemberRepository memberRepository;
   public static ArticleRepository articleRepository;
   public static MemberService memberService;
@@ -19,6 +21,8 @@ public class Container {
 
   static {
     sc = new Scanner(System.in);
+    session = new Session();
+
     memberRepository = new MemberRepository();
     articleRepository = new ArticleRepository();
 
