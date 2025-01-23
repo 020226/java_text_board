@@ -15,4 +15,10 @@ public class MemberRepository {
     Member member = new Member(id, loginId,  loginPW, name);
     members.add(member);
   }
+  public Member findByLoginId(String loginId) {
+    return members.stream()
+        .filter(member -> member.getLoginId().equals(loginId))
+        .findFirst()
+        .orElse(null);
+  }
 }
