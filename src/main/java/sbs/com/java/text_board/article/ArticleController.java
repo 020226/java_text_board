@@ -51,8 +51,7 @@ public class ArticleController {
     System.out.println("번호 | 제목");
 
     articles.forEach(
-        article -> System.out.printf("%d | %s\n", article.id, article.subject)
-    );
+        article -> System.out.printf("%d | %s\n", article.getId(), article.getSubject())    );
   }
 
   public void showDetail(Rq rq) {
@@ -71,9 +70,9 @@ public class ArticleController {
     }
 
     System.out.println("== 게시물 상세보기 ==");
-    System.out.printf("번호 : %d\n", article.id);
-    System.out.printf("제목 : %s\n", article.subject);
-    System.out.printf("내용 : %s\n", article.content);
+    System.out.printf("번호 : %d\n", article.getId());
+    System.out.printf("제목 : %s\n", article.getSubject());
+    System.out.printf("내용 : %s\n", article.getContent());
   }
 
   public void doModify(Rq rq) {
