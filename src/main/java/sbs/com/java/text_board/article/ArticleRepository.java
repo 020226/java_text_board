@@ -17,11 +17,12 @@ public class ArticleRepository {
   }
   void makeTestData() {
     IntStream.rangeClosed(1, 100)
-        .forEach(i -> write("제목" + i, "내용" + i, "익명", i));
+        // 게시판 번호 1 혹은 2를 랜덤하게 (int)(Math.random() * 2) + 1)
+        .forEach(i -> write("제목" + i, "내용" + i, "익명", i, (int)(Math.random() * 2) + 1));
   }
-  public int write(String subject, String content, String name, int memberId) {
+  public int write(String subject, String content, String name, int memberId, int boardId) {
     int id = ++lastId;
-    Article article = new Article(id, subject, content, name, memberId);
+    Article article = new Article(id, subject, content, name, memberId, boardId);
     articles.add(article);
     return id;
   }

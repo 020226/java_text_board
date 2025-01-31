@@ -9,8 +9,8 @@ public class ArticleService {
   public ArticleService() {
     articleRepository = Container.articleRepository;
   }
-  public int write(String subject, String content, String name, int memberId) {
-    return articleRepository.write(subject, content, name, memberId);
+  public int write(String subject, String content, String name, int memberId, int boardId) {
+    return articleRepository.write(subject, content, name, memberId, boardId);
   }
   public List<Article> getArticles(String searchKeyword, String orderBy) {
     return articleRepository.getArticles(searchKeyword, orderBy);
