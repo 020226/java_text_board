@@ -23,17 +23,19 @@ public class App {
   void run() {
     System.out.println("== 자바 텍스트 게시판 시작 ==");
 
+    // 프로그램이 실행되자마 회원 1번이 로그인 될 수 있도록.
+    forTestLoginByMemberId(1);
     while (true) {
-      Session session = Container.session;
-      Member member = (Member) session.getAttribute("loginedMember");
+      Rq rq = new Rq();
       String promptName = "명령";
-      if(member != null) {
-        promptName = member.getLoginId();
+      if(rq.isLogined()) {
+        Member loginedMember = rq.getLoginedMember();
+        promptName = loginedMember.getLoginId();
       }
       System.out.printf("%s) ", promptName);
       String cmd = Container.sc.nextLine();
 
-      Rq rq = new Rq(cmd);
+      rq.setCommand(cmd);
 
       if(!runInterceptor(rq)) {
         continue;
@@ -77,5 +79,9 @@ public class App {
       }
     }
     return true;
+  }
+  private void forTestLoginByMemberId(int id) {
+    Member member = Container.memberService.findById(id);
+    new Rq().login(member);
   }
 }
