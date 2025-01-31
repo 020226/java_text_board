@@ -1,5 +1,6 @@
 package sbs.com.java.text_board.util;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,5 +33,12 @@ public class Util {
       reverse.add(list.get(i));
     }
     return reverse;
+  }
+
+  // 현재 날짜시간 저장 메서드
+  public static String getNowDateStr() {
+    SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    String dateStr = format1.format(System.currentTimeMillis());
+    return dateStr;
   }
 }
