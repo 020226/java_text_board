@@ -3,6 +3,7 @@ package sbs.com.java.text_board;
 import lombok.Getter;
 import sbs.com.java.text_board.base.session.Session;
 import sbs.com.java.text_board.container.Container;
+import sbs.com.java.text_board.member.Member;
 import sbs.com.java.text_board.util.Util;
 
 import java.util.Map;
@@ -56,5 +57,8 @@ public class Rq {
   }
   public void removeSessionAttr(String attrName) {
     session.removeAttribute(attrName);
+  }
+  public Member getLoginedMember() {
+    return (Member) session.getAttribute(loginedMember);
   }
 }

@@ -35,8 +35,9 @@ public class ArticleController {
       return;
     }
 
-    Member member = (Member) session.getAttribute("loginedMember");
-    int id = articleService.write(subject, content, member.getName());
+    Member member = rq.getLoginedMember();
+    // 1번회원, user1, 1234, 김철수
+    int id = articleService.write(subject, content, member.getName(), member.getId());
     System.out.printf("%d번 게시물이 등록되었습니다.\n", id);
   }
 
@@ -96,6 +97,12 @@ public class ArticleController {
       return;
     }
 
+    Member member = rq.getLoginedMember();
+    if(article.getMemberId() != member.getId()) {
+      System.out.println("해당 글에 권한이 없습니다.");
+      return;
+    }
+
     System.out.print("새 제목 : ");
     String subject = Container.sc.nextLine();
 
@@ -129,6 +136,12 @@ public class ArticleController {
 
     if (article == null) {
       System.out.printf("%d번 게시물은 존재하지 않습니다.\n", id);
+      return;
+    }
+
+    Member member = rq.getLoginedMember();
+    if(article.getMemberId() != member.getId()) {
+      System.out.println("해당 글에 권한이 없습니다.");
       return;
     }
 
