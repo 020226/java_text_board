@@ -2,6 +2,8 @@ package sbs.com.java.text_board.article;
 
 import sbs.com.java.text_board.Rq;
 import sbs.com.java.text_board.base.session.Session;
+import sbs.com.java.text_board.board.Board;
+import sbs.com.java.text_board.board.BoardService;
 import sbs.com.java.text_board.container.Container;
 import sbs.com.java.text_board.member.Member;
 
@@ -10,15 +12,30 @@ import java.util.List;
 public class ArticleController {
 
   private ArticleService articleService;
+  private BoardService boardService;
   private Session session;
 
   public ArticleController() {
     articleService = Container.articleService;
+    boardService = Container.boardService;
+
     session = Container.session;
   }
 
   public void doWrite(Rq rq) {
-    System.out.println("== 게시물 작성 ==");
+    int boardId = rq.getIntParam("boardId", 0);
+
+    // 유효성검사
+    if(boardId == 0) {
+      System.out.println("boardId를 입력해주세요.");
+      return;
+    }
+    Board board = boardService.findByBoardId(boardId);
+    if(board == null) {
+      System.out.println("존재하지 않는 게시판 번호입니다.");
+      return;
+    }
+    System.out.printf("== %s 게시물 작성 ==\n", board.getName());
     System.out.print("제목 : ");
     String subject = Container.sc.nextLine();
 
@@ -38,8 +55,7 @@ public class ArticleController {
     Member member = rq.getLoginedMember();
     // 1번회원, user1, 1234, 김철수
 
-    // boardId를 1로 지정하여 무조건 글을 쓰면 자유게시판에 작성되도록 임시로 1 입력
-    int id = articleService.write(subject, content, member.getName(), member.getId(), 1);
+    int id = articleService.write(subject, content, member.getName(), member.getId(), boardId);
     System.out.printf("%d번 게시물이 등록되었습니다.\n", id);
   }
 
