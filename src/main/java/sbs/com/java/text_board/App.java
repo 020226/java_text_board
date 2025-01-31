@@ -1,10 +1,14 @@
 package sbs.com.java.text_board;
 
 import sbs.com.java.text_board.article.ArticleController;
+import sbs.com.java.text_board.base.interceptor.Interceptor;
 import sbs.com.java.text_board.base.session.Session;
 import sbs.com.java.text_board.container.Container;
 import sbs.com.java.text_board.member.Member;
 import sbs.com.java.text_board.member.MemberController;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class App {
   public MemberController memberController;
@@ -30,6 +34,10 @@ public class App {
       String cmd = Container.sc.nextLine();
 
       Rq rq = new Rq(cmd);
+
+      if(!runInterceptor(rq)) {
+        continue;
+      }
 
       if (rq.getUrlPath().equals("/usr/article/write")) {
         articleController.doWrite();
@@ -57,5 +65,17 @@ public class App {
 
     System.out.println("== 자바 텍스트 게시판 종료 ==");
     Container.sc.close();
+  }
+
+  private boolean runInterceptor(Rq rq) {
+    List<Interceptor> interceptors = new ArrayList<>();
+    interceptors.add(Container.needLoginInterceptor);
+    interceptors.add(Container.needLogoutInterceptor);
+    for(Interceptor interceptor : interceptors) {
+      if(!interceptor.run(rq)) {
+        return false;
+      }
+    }
+    return true;
   }
 }

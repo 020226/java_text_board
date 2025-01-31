@@ -71,10 +71,7 @@ public class MemberController {
     String loginId;
     String loginPW;
     Member member;
-    if(rq.isLogined()) {
-      System.out.println("이미 로그인 되어 있습니다.");
-      return;
-    }
+
     System.out.println("== 로그인 ==");
     // 로그인 아이디 입력
     while (true) {
@@ -126,10 +123,6 @@ public class MemberController {
   }
 
   public void doLogout(Rq rq) {
-    if(rq.isLogout()) {
-      System.out.println("로그인 후 이용해주세요.");
-      return;
-    }
     rq.removeSessionAttr("loginedMember");
     System.out.println("로그아웃 되었습니다.");
   }
